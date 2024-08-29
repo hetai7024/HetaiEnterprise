@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>和泰集團</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const otherBankCheckbox = document.getElementById('other_bank_checkbox');
+            const otherBankText = document.getElementById('other_bank_text');
+
+            function toggleOtherBankInput() {
+                if (otherBankCheckbox.checked) {
+                    otherBankText.style.display = 'block';
+                } else {
+                    otherBankText.style.display = 'none';
+                    otherBankText.value = '';
+                }
+            }
+
+            toggleOtherBankInput();
+            otherBankCheckbox.addEventListener('change', toggleOtherBankInput);
+
+            const form = document.querySelector('form');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // 防止表單的默認提交行為
+
+                const formData = new FormData(form);
+                const data = {};
+                formData.forEach((value, key) => {
+                    if (data[key]) {
+                        // If key already exists, push to array
+                        if (!Array.isArray(data[key])) {
+                            data[key] = [data[key]];
+                        }
+                        data[key].push(value);
+                    } else {
+                        data[key] = value;
+                    }
+                });
+
+                fetch('process_form.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    alert('資料已保存');
+                    window.location.href = 'page2.html'; // 自动转向第二页
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                    alert('資料保存失敗，請重試。');
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="images/logo.png" alt="Logo" class="logo">
+            <h1>和潤企業股份有限公司</h1>
+        </div>
+        <div class="form-title">信貸初審申請表</div>
+        <form method="post"> <!-- 确保使用 POST 方法 -->
+            <div class="form-group">
+                <label for="name">姓名：</label>
+                <input type="text" id="name" name="name" placeholder="申請人姓名(必填)" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">聯絡電話：</label>
+                <input type="text" id="phone" name="phone" placeholder="申請人電話(必填)" required>
+            </div>
+            <div class="form-group">
+                <label>性別：</label>
+                <label><input type="radio" name="gender" value="男" required> 男</label>
+                <label><input type="radio" name="gender" value="女"> 女</label>
+            </div>
+            <div class="form-group">
+                <label for="age">年齡：</label>
+                <input type="text" id="age" name="age" required>
+            </div>
+            <div class="form-group">
+                <label for="city">居住縣市：</label>
+                <input type="text" id="city" name="city" required>
+            </div>
+            <div class="form-group">
+                <label for="industry">從事行業：</label>
+                <input type="text" id="industry" name="industry" required>
+            </div>
+            <div class="form-group">
+                <label for="company">公司名稱：</label>
+                <input type="text" id="company" name="company" placeholder="請填寫(必填)" required>
+            </div>
+            <div class="form-group">
+                <label for="position">公司職位：</label>
+                <input type="text" id="position" name="position" placeholder="請填寫(必填)" required>
+            </div>
+            <div class="form-group">
+                <label for="work_years">工作年資：</label>
+                <input type="text" id="work_years" name="work_years" placeholder="請填寫工作年資" required>
+            </div>
+            <div class="form-group">
+                <label for="income">每月收入：</label>
+                <input type="text" id="income" name="income" required>
+            </div>
+            <div class="form-group">
+                <label>薪轉：</label>
+                <label><input type="radio" name="salary_transfer" value="有" required> 有</label>
+                <label><input type="radio" name="salary_transfer" value="無"> 無</label>
+            </div>
+            <div class="form-group">
+                <label for="bank">薪轉帳戶：</label>
+                <input type="text" id="bank" name="bank" placeholder="如無薪轉帳戶請填無(請填寫)" required>
+            </div>
+            <div class="form-group">
+                <label>名下開戶銀行(可複選)：</label>
+                <div>
+                    <label><input type="checkbox" name="bank_account[]" value="004"> 004-台灣銀行</label>
+                    <label><input type="checkbox" name="bank_account[]" value="005"> 005-土地銀行</label>
+                    <label><input type="checkbox" name="bank_account[]" value="006"> 006-兆豐金控</label>
+                    <label><input type="checkbox" name="bank_account[]" value="007"> 007-彰化銀行</label>
+                    <label><input type="checkbox" name="bank_account[]" value="008"> 008-華南銀行</label>
+                    <label><input type="checkbox" name="bank_account[]" value="013"> 013-國泰世華</label>
+                    <label><input type="checkbox" name="bank_account[]" value="822"> 822-中國信託</label>
+                    <label><input type="checkbox" name="bank_account[]" value="812"> 812-台新銀行</label>
+                    <label><input type="checkbox" id="other_bank_checkbox" name="bank_account[]" value="other"> 其他開戶銀行</label>
+                    <input type="text" id="other_bank_text" name="other_bank" style="display:none;" placeholder="請填寫其他開戶銀行">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>名下帳戶狀況(可複選)：</label>
+                <div>
+                    <label><input type="checkbox" name="account_status[]" value="警示授權"> 警示授權</label>
+                    <label><input type="checkbox" name="account_status[]" value="支付命令"> 支付命令</label>
+                    <label><input type="checkbox" name="account_status[]" value="強制扣除"> 強制扣除</label>
+                    <label><input type="checkbox" name="account_status[]" value="無"> 以上皆無</label>
+                </div>
+            </div>
+            <button type="submit" class="submit-button">確認下一步</button>
+        </form>
+    </div>
+</body>
+</html>
